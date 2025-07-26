@@ -40,15 +40,21 @@
             echo "📦 Redis server already running"
           fi
           
+          # Check if we're in the project root
+          if [ ! -f "flake.nix" ]; then
+            echo "❌ Error: Please run this command from the project root directory"
+            exit 1
+          fi
+          
           # Install dependencies if needed
           if [ ! -d "backend/node_modules" ]; then
             echo "📦 Installing backend dependencies..."
-            cd backend && npm install && cd ..
+            (cd backend && npm install)
           fi
           
           if [ ! -d "frontend/node_modules" ]; then
             echo "📦 Installing frontend dependencies..."
-            cd frontend && npm install && cd ..
+            (cd frontend && npm install)
           fi
           
           # Set up environment
@@ -67,8 +73,8 @@
           # Start both services with proper cleanup
           trap 'echo "🛑 Shutting down..."; jobs -p | xargs -r kill; exit' INT TERM
           
-          cd backend && npm run dev &
-          cd frontend && npm run dev &
+          (cd backend && npm run dev) &
+          (cd frontend && npm run dev) &
           
           wait
         '';
@@ -87,10 +93,10 @@
           fi
           
           echo "🔍 Running backend tests..."
-          cd backend && npm test
+          (cd backend && npm test)
           
           echo "🔍 Running frontend tests..."
-          cd frontend && npm test
+          (cd frontend && npm test)
           
           echo "✅ All tests completed!"
         '';
@@ -103,10 +109,10 @@
           echo "🏗️ Building Links2Go..."
           
           echo "🔨 Building backend..."
-          cd backend && npm run build && cd ..
+          (cd backend && npm run build)
           
           echo "🔨 Building frontend..."
-          cd frontend && npm run build && cd ..
+          (cd frontend && npm run build)
           
           echo "✅ Build completed!"
           echo "   Backend build: backend/dist/"
