@@ -1,0 +1,103 @@
+🎨 Links2Go has been deployed successfully! 🎨
+
+{{- if .Values.ingress.enabled }}
+{{- range $host := .Values.ingress.hosts }}
+  {{- range .paths }}
+Your application is available at:
+{{- if $.Values.ingress.tls }}
+  🔒 https://{{ $host.host }}{{ .path }}
+{{- else }}
+  🌐 http://{{ $host.host }}{{ .path }}
+{{- end }}
+  {{- end }}
+{{- end }}
+{{- else if contains "NodePort" .Values.frontend.service.type }}
+export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "links2go.fullname" . }}-frontend)
+export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
+Your application is available at:
+  🌐 http://$NODE_IP:$NODE_PORT
+{{- else if contains "LoadBalancer" .Values.frontend.service.type }}
+     NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+           You can watch the status by running 'kubectl get --namespace {{ .Release.Namespace }} svc -w {{ include "links2go.fullname" . }}-frontend'
+export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ include "links2go.fullname" . }}-frontend --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}")
+Your application is available at:
+  🌐 http://$SERVICE_IP:{{ .Values.frontend.service.port }}
+{{- else if contains "ClusterIP" .Values.frontend.service.type }}
+Your application is running inside the cluster. To access it:
+
+1. Forward the frontend port:
+   kubectl --namespace {{ .Release.Namespace }} port-forward svc/{{ include "links2go.fullname" . }}-frontend 8080:{{ .Values.frontend.service.port }}
+
+2. Visit the application:
+   🌐 http://127.0.0.1:8080
+{{- end }}
+
+📊 Backend API Health Check:
+{{- if .Values.ingress.enabled }}
+{{- $host := (index .Values.ingress.hosts 0).host }}
+{{- if .Values.ingress.tls }}
+  🔍 https://{{ $host }}/api/health
+{{- else }}
+  🔍 http://{{ $host }}/api/health
+{{- end }}
+{{- else }}
+  kubectl --namespace {{ .Release.Namespace }} port-forward svc/{{ include "links2go.fullname" . }}-backend 3001:{{ .Values.backend.service.port }}
+  🔍 http://127.0.0.1:3001/health
+{{- end }}
+
+{{- if and .Values.monitoring.enabled .Values.monitoring.serviceMonitor.enabled }}
+📈 Prometheus Metrics:
+{{- if .Values.ingress.enabled }}
+{{- $host := (index .Values.ingress.hosts 0).host }}
+{{- if .Values.ingress.tls }}
+  📊 https://{{ $host }}/api/metrics
+{{- else }}
+  📊 http://{{ $host }}/api/metrics
+{{- end }}
+{{- else }}
+  kubectl --namespace {{ .Release.Namespace }} port-forward svc/{{ include "links2go.fullname" . }}-backend 3001:{{ .Values.backend.service.port }}
+  📊 http://127.0.0.1:3001/metrics
+{{- end }}
+{{- end }}
+
+🔧 Useful Commands:
+
+1. Check deployment status:
+   kubectl get pods --namespace {{ .Release.Namespace }} -l app.kubernetes.io/instance={{ .Release.Name }}
+
+2. View logs:
+   # Frontend logs
+   kubectl logs --namespace {{ .Release.Namespace }} -l app.kubernetes.io/component=frontend
+   
+   # Backend logs
+   kubectl logs --namespace {{ .Release.Namespace }} -l app.kubernetes.io/component=backend
+
+3. Scale deployments:
+   # Scale backend
+   kubectl scale --namespace {{ .Release.Namespace }} deployment {{ include "links2go.fullname" . }}-backend --replicas=5
+   
+   # Scale frontend
+   kubectl scale --namespace {{ .Release.Namespace }} deployment {{ include "links2go.fullname" . }}-frontend --replicas=3
+
+{{- if .Values.redis.enabled }}
+4. Connect to Redis:
+   kubectl run --namespace {{ .Release.Namespace }} redis-client --rm --tty -i --restart='Never' \
+     --image redis:7-alpine -- redis-cli -h {{ include "links2go.fullname" . }}-redis-master -p {{ include "links2go.redisPort" . }}
+{{- end }}
+
+🎭 CRT Themes Available:
+- 🟢 Green Phosphor (Classic 1970s-80s terminal)
+- 🟠 Amber Terminal (Warm 1980s business display)
+- 🔵 Blue Screen (Cool vintage scientific equipment)
+- ⚪ White Terminal (High contrast accessibility)
+- 🔷 Cyan Matrix (Cyberpunk sci-fi aesthetic)
+
+Access settings with F12 or click the SETTINGS button to switch themes!
+
+{{- if .Values.ingress.enabled }}
+🚀 Your retro URL shortener is ready at {{ (index .Values.ingress.hosts 0).host }}!
+{{- else }}
+🚀 Your retro URL shortener is ready!
+{{- end }}
+
+📖 For more information, visit: https://github.com/malagant/links2go

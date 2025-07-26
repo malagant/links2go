@@ -1,0 +1,245 @@
+# Production values for links2go
+# Override the default values for production deployment
+
+# Global configuration for production
+global:
+  imageRegistry: "your-registry.example.com"
+  imagePullSecrets:
+    - name: registry-secret
+
+# Frontend configuration for production
+frontend:
+  replicaCount: 3
+  
+  image:
+    repository: links2go/frontend
+    tag: "0.7.0"
+    pullPolicy: Always
+  
+  resources:
+    limits:
+      cpu: 300m
+      memory: 384Mi
+    requests:
+      cpu: 150m
+      memory: 192Mi
+  
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 15
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 75
+  
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+            - key: app.kubernetes.io/component
+              operator: In
+              values:
+              - frontend
+          topologyKey: kubernetes.io/hostname
+
+# Backend configuration for production
+backend:
+  replicaCount: 5
+  
+  image:
+    repository: links2go/backend
+    tag: "0.7.0"
+    pullPolicy: Always
+  
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+  
+  autoscaling:
+    enabled: true
+    minReplicas: 5
+    maxReplicas: 50
+    targetCPUUtilizationPercentage: 60
+    targetMemoryUtilizationPercentage: 70
+  
+  # Production rate limiting - more restrictive
+  rateLimit:
+    windowMs: 900000  # 15 minutes
+    max: 1000         # requests per window per IP
+
+# Production ingress configuration
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "16m"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://yourdomain.com"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    nginx.ingress.kubernetes.io/rate-limit-window: "1m"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    # Security headers
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      add_header X-Frame-Options "SAMEORIGIN" always;
+      add_header X-Content-Type-Options "nosniff" always;
+      add_header X-XSS-Protection "1; mode=block" always;
+      add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+      add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+  
+  hosts:
+    - host: yourdomain.com
+      paths:
+        - path: /api
+          pathType: Prefix
+          backend: backend
+        - path: /
+          pathType: Prefix
+          backend: frontend
+  
+  tls:
+    - secretName: links2go-tls
+      hosts:
+        - yourdomain.com
+
+# Redis configuration for production
+redis:
+  enabled: true
+  
+  # Redis authentication - use strong password
+  auth:
+    enabled: true
+    password: "CHANGE-ME-STRONG-REDIS-PASSWORD"
+  
+  # Master configuration
+  master:
+    persistence:
+      enabled: true
+      size: 20Gi
+      storageClass: "fast-ssd"
+    
+    resources:
+      requests:
+        memory: 1Gi
+        cpu: 500m
+      limits:
+        memory: 2Gi
+        cpu: 1000m
+  
+  # Enable replica for high availability
+  replica:
+    replicaCount: 2
+    persistence:
+      enabled: true
+      size: 20Gi
+      storageClass: "fast-ssd"
+    
+    resources:
+      requests:
+        memory: 1Gi
+        cpu: 500m
+      limits:
+        memory: 2Gi
+        cpu: 1000m
+  
+  # Enable metrics for monitoring
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+
+# Enable monitoring for production
+monitoring:
+  enabled: true
+  
+  serviceMonitor:
+    enabled: true
+    namespace: "monitoring"
+    interval: 15s
+    scrapeTimeout: 5s
+    labels:
+      prometheus-instance: main
+
+# Network Policy for production security
+networkPolicy:
+  enabled: true
+  
+  ingress:
+    # Allow ingress from nginx controller
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: ingress-nginx
+      ports:
+        - protocol: TCP
+          port: 8080
+        - protocol: TCP
+          port: 3001
+    # Allow internal communication
+    - from:
+        - podSelector: {}
+      ports:
+        - protocol: TCP
+          port: 8080
+        - protocol: TCP
+          port: 3001
+
+# Pod Disruption Budget for high availability
+podDisruptionBudget:
+  enabled: true
+  frontend:
+    minAvailable: 2
+  backend:
+    minAvailable: 3
+
+# Security contexts for production
+podSecurityContext:
+  fsGroup: 1001
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: false
+  runAsNonRoot: true
+  runAsUser: 1001
+  seccompProfile:
+    type: RuntimeDefault
+
+# Node selectors for production workloads
+frontend:
+  nodeSelector:
+    workload-type: web
+    
+backend:
+  nodeSelector:
+    workload-type: api
+
+# Tolerations for dedicated nodes
+frontend:
+  tolerations:
+    - key: "workload-type"
+      operator: "Equal"
+      value: "web"
+      effect: "NoSchedule"
+
+backend:
+  tolerations:
+    - key: "workload-type"
+      operator: "Equal"
+      value: "api"  
+      effect: "NoSchedule"

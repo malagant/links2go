@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "links2go.fullname" . }}-config
+  labels:
+    {{- include "links2go.labels" . | nindent 4 }}
+    {{- with .Values.commonLabels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.commonAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+data:
+  # Backend configuration
+  NODE_ENV: {{ .Values.backend.env.NODE_ENV | quote }}
+  PORT: {{ .Values.backend.env.PORT | quote }}
+  BASE_URL: {{ include "links2go.baseUrl" . | quote }}
+  FRONTEND_URL: {{ include "links2go.frontendUrl" . | quote }}
+  
+  # Redis configuration
+  REDIS_HOST: {{ include "links2go.redisHost" . | quote }}
+  REDIS_PORT: {{ include "links2go.redisPort" . | quote }}
+  REDIS_DB: "0"
+  
+  # Rate limiting configuration
+  RATE_LIMIT_WINDOW_MS: {{ .Values.backend.rateLimit.windowMs | quote }}
+  RATE_LIMIT_MAX: {{ .Values.backend.rateLimit.max | quote }}
+  
+  # Short code configuration
+  SHORT_CODE_LENGTH: "6"
+  SHORT_CODE_ALPHABET: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"

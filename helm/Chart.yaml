@@ -1,0 +1,27 @@
+apiVersion: v2
+name: links2go
+description: A fast URL shortener with nostalgic analog TV monitor interface
+type: application
+version: 0.7.0
+appVersion: "0.7.0"
+home: https://github.com/malagant/links2go
+sources:
+  - https://github.com/malagant/links2go
+maintainers:
+  - name: malagant
+    url: https://github.com/malagant
+keywords:
+  - url-shortener
+  - retro
+  - crt
+  - redis
+  - nodejs
+  - react
+annotations:
+  category: Web Applications
+
+dependencies:
+  - name: redis
+    version: "18.19.4"
+    repository: "oci://registry-1.docker.io/bitnamicharts"
+    condition: redis.enabled

@@ -1,0 +1,20 @@
+{{- if .Values.frontend.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "links2go.fullname" . }}-frontend-config
+  labels:
+    {{- include "links2go.frontend.labels" . | nindent 4 }}
+    {{- with .Values.commonLabels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.commonAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+data:
+  # Frontend configuration
+  API_URL: {{ printf "%s/api" (include "links2go.baseUrl" .) | quote }}
+  APP_TITLE: "Links2Go - Retro URL Shortener"
+  APP_VERSION: {{ .Chart.AppVersion | quote }}
+{{- end }}
