@@ -1,6 +1,7 @@
 import { redis } from "../config/redis.js";
 import { createShortCode, isValidShortCode } from "../utils/shortCode.js";
 import { sanitizeUrl } from "../utils/validation.js";
+import { metricsService } from "./metricsService.js";
 import type {
   ShortenedUrl,
   UrlAnalytics,
@@ -62,6 +63,9 @@ export class UrlService {
       await redis.expireAt(`${this.URL_PREFIX}${shortCode}`, Math.floor(expiresAt.getTime() / 1000));
     }
 
+    // Record metrics
+    metricsService.incrementUrlsShortened(!!request.customCode);
+
     return {
       shortCode,
       shortUrl: `${config.baseUrl}/${shortCode}`,
@@ -94,17 +98,22 @@ export class UrlService {
       timestamp: new Date(),
     };
 
-    // Increment click count
-    await redis.hIncrBy(`${this.URL_PREFIX}${shortCode}`, "clickCount", 1);
+    try {
+      // Increment click count
+      await redis.hIncrBy(`${this.URL_PREFIX}${shortCode}`, "clickCount", 1);
 
-    // Store click event for analytics
-    await redis.lPush(
-      `${this.ANALYTICS_PREFIX}${shortCode}`,
-      JSON.stringify(click)
-    );
+      // Store click event for analytics
+      await redis.lPush(
+        `${this.ANALYTICS_PREFIX}${shortCode}`,
+        JSON.stringify(click)
+      );
 
-    // Keep only last 100 clicks
-    await redis.lTrim(`${this.ANALYTICS_PREFIX}${shortCode}`, 0, 99);
+      // Keep only last 100 clicks
+      await redis.lTrim(`${this.ANALYTICS_PREFIX}${shortCode}`, 0, 99);
+    } catch (error) {
+      console.error("Error recording click:", error);
+      // Don't throw error to avoid breaking the redirect
+    }
   }
 
   async getAnalytics(shortCode: string): Promise<AnalyticsResponse | null> {
