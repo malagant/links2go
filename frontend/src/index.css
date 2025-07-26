@@ -1,0 +1,145 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
+
+/* CRT Screen Effects */
+@layer base {
+  body {
+    @apply bg-black font-mono text-retro-text;
+    overflow-x: hidden;
+  }
+  
+  * {
+    box-sizing: border-box;
+  }
+}
+
+/* CRT Monitor Styles */
+@layer components {
+  .crt-monitor {
+    position: relative;
+    background: linear-gradient(45deg, #2a2a2a, #1a1a1a);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 
+      0 0 100px rgba(0, 0, 0, 0.9),
+      inset 0 0 20px rgba(255, 255, 255, 0.1);
+  }
+  
+  .crt-screen {
+    position: relative;
+    background: #000;
+    border-radius: 10px;
+    padding: 20px;
+    overflow: hidden;
+    box-shadow: 
+      inset 0 0 50px rgba(0, 0, 0, 0.8),
+      0 0 30px rgba(0, 255, 65, 0.2);
+  }
+  
+  .crt-screen::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 255, 65, 0.03) 2px,
+      rgba(0, 255, 65, 0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 10;
+  }
+  
+  .crt-screen::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.3) 100%);
+    pointer-events: none;
+    z-index: 5;
+  }
+  
+  .scanlines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 1px,
+      rgba(0, 255, 65, 0.05) 1px,
+      rgba(0, 255, 65, 0.05) 2px
+    );
+    animation: scanline 0.1s linear infinite;
+    pointer-events: none;
+    z-index: 15;
+  }
+  
+  .retro-button {
+    @apply bg-retro-bg border-2 border-retro-text text-retro-text px-6 py-3 font-mono text-sm uppercase tracking-wider;
+    transition: all 0.2s ease;
+    text-shadow: 0 0 10px currentColor;
+    box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+  }
+  
+  .retro-button:hover {
+    @apply bg-retro-text text-retro-bg;
+    text-shadow: none;
+    box-shadow: 0 0 20px rgba(0, 255, 65, 0.6);
+  }
+  
+  .retro-input {
+    @apply bg-retro-bg border-2 border-retro-dim text-retro-text px-4 py-3 font-mono text-sm;
+    text-shadow: 0 0 5px currentColor;
+    box-shadow: inset 0 0 10px rgba(0, 255, 65, 0.1);
+  }
+  
+  .retro-input:focus {
+    @apply border-retro-text outline-none;
+    box-shadow: 
+      inset 0 0 10px rgba(0, 255, 65, 0.2),
+      0 0 10px rgba(0, 255, 65, 0.3);
+  }
+  
+  .terminal-text {
+    @apply text-retro-text font-mono;
+    text-shadow: 0 0 10px currentColor;
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+  
+  .status-light {
+    @apply w-3 h-3 rounded-full;
+    box-shadow: 0 0 10px currentColor;
+  }
+  
+  .status-light.active {
+    @apply bg-retro-text;
+    animation: glow 1s ease-in-out infinite alternate;
+  }
+  
+  .status-light.inactive {
+    @apply bg-retro-dim;
+  }
+}
+
+/* Flicker Animation */
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.98; }
+}
+
+.crt-flicker {
+  animation: flicker 0.15s infinite linear alternate;
+}
