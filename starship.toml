@@ -1,0 +1,95 @@
+# Links2Go Starship Configuration
+# Retro/Terminal themed prompt for the project
+
+format = """
+[┌─](#00ff41)\
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_status\
+$nodejs\
+$redis\
+$package\
+$fill\
+$time
+[└─](#00ff41) $character"""
+
+[fill]
+symbol = "─"
+style = "#008f20"
+
+[character]
+success_symbol = "[❯](#00ff41)"
+error_symbol = "[❯](#ff0040)"
+vimcmd_symbol = "[❮](#00ff41)"
+
+[username]
+show_always = false
+style_user = "#00ff41"
+style_root = "#ff0040"
+format = "[$user]($style)[@](bold #008f20)"
+
+[hostname]
+ssh_only = false
+format = "[$hostname]($style)[:]($style)"
+style = "#00ff41"
+disabled = false
+
+[directory]
+style = "#40ff71"
+read_only = "🔒"
+truncation_length = 3
+truncate_to_repo = true
+format = "[$path]($style)[$read_only]($read_only_style) "
+
+[git_branch]
+symbol = "🌿"
+style = "#00ff41"
+format = "[$symbol$branch]($style) "
+
+[git_status]
+style = "#ff8800"
+format = "([\\[$all_status$ahead_behind\\]]($style) )"
+
+[nodejs]
+symbol = "⬢ "
+style = "#40ff71"
+format = "[$symbol($version)]($style) "
+
+[package]
+symbol = "📦 "
+style = "#008f20"
+format = "[$symbol$version]($style) "
+
+[time]
+disabled = false
+style = "#008f20"
+format = "[$time]($style)"
+
+# Custom Redis module (if detected)
+[custom.redis]
+command = "redis-cli ping 2>/dev/null && echo 'CONNECTED' || echo 'DISCONNECTED'"
+when = "command -v redis-cli >/dev/null"
+symbol = "🗄️ "
+style = "#ff8800"
+format = "[$symbol$output]($style) "
+
+# Links2Go project indicator
+[custom.links2go]
+command = "echo 'Links2Go'"
+when = "test -f flake.nix && grep -q 'Links2Go' flake.nix"
+symbol = "🖥️ "
+style = "#00ff41"
+format = "[$symbol$output]($style) "
+
+[memory_usage]
+disabled = false
+threshold = 75
+symbol = "🧠 "
+style = "#ff8800"
+
+[cmd_duration]
+min_time = 2_000
+style = "#ffff00"
+format = "[⏱️ $duration]($style) "

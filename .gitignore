@@ -56,3 +56,8 @@ dump.rdb
 # Temporary folders
 tmp/
 temp/
+
+# Nix development environment
+.nix-shell/
+result
+result-*

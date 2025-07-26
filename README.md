@@ -39,16 +39,37 @@ The development environment includes:
 - Redis server (auto-started)
 - All project dependencies
 - Development scripts
+- **Zsh with Starship prompt** - Beautiful retro-themed terminal
+- **Smart aliases** - Shortcuts for common development tasks
+- **Auto-completion** - Enhanced command completion
 
 ### Available Commands
 
-Once in the Nix shell:
+Once in the Nix shell (with beautiful Starship prompt):
 
 ```bash
-start-dev     # Start both frontend and backend in development mode
-run-tests     # Run comprehensive test suite
-build-project # Build production-ready packages
-clean-project # Clean all build artifacts and reset environment
+# Main development commands
+dev           # Start both frontend and backend in development mode
+test          # Run comprehensive test suite  
+build         # Build production-ready packages
+clean         # Clean all build artifacts and reset environment
+
+# Redis management
+redis-status  # Check Redis connection
+redis-start   # Start Redis server
+redis-stop    # Stop Redis server
+
+# Navigation shortcuts
+backend       # Go to backend directory
+frontend      # Go to frontend directory
+root          # Go to project root
+
+# Git shortcuts
+gs            # git status
+ga            # git add
+gc            # git commit
+gp            # git push
+gl            # git log --oneline -10
 ```
 
 ### Using Nix Apps

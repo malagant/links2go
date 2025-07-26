@@ -22,6 +22,8 @@
           curl
           jq
           procps
+          zsh
+          starship
         ];
 
         # Development shell script
@@ -148,18 +150,6 @@
           inherit buildInputs;
           
           shellHook = ''
-            echo "🎮 Welcome to Links2Go development environment!"
-            echo ""
-            echo "Available commands:"
-            echo "  start-dev     - Start development servers"
-            echo "  run-tests     - Run test suite"
-            echo "  build-project - Build for production"
-            echo "  clean-project - Clean all build artifacts"
-            echo ""
-            echo "Quick start:"
-            echo "  start-dev"
-            echo ""
-            
             # Set up environment variables
             export NODE_ENV=development
             export REDIS_HOST=localhost
@@ -170,6 +160,98 @@
             
             # Add scripts to PATH
             export PATH="${startDevScript}/bin:${testScript}/bin:${buildScript}/bin:${cleanScript}/bin:$PATH"
+            
+            # Configure Starship prompt
+            export STARSHIP_CONFIG="$(pwd)/starship.toml"
+            
+            # Set up zsh as the shell with Starship
+            export SHELL="${pkgs.zsh}/bin/zsh"
+            
+            # Create temporary zsh config for this session
+            export ZDOTDIR="$PWD/.nix-shell"
+            mkdir -p "$ZDOTDIR"
+            
+            cat > "$ZDOTDIR/.zshrc" << 'EOF'
+            # Starship prompt
+            eval "$(starship init zsh)"
+            
+            # Enable auto-completion
+            autoload -U compinit && compinit
+            
+            # History settings
+            HISTSIZE=10000
+            SAVEHIST=10000
+            HISTFILE="$ZDOTDIR/.zsh_history"
+            setopt share_history
+            setopt hist_ignore_all_dups
+            setopt hist_ignore_space
+            
+            # Key bindings
+            bindkey -e  # Emacs key bindings
+            
+            # Aliases for Links2Go
+            alias dev="start-dev"
+            alias test="run-tests" 
+            alias build="build-project"
+            alias clean="clean-project"
+            alias ll="ls -la"
+            alias la="ls -la"
+            alias ..="cd .."
+            alias ...="cd ../.."
+            
+            # Redis helpers
+            alias redis-status="redis-cli ping 2>/dev/null && echo 'Redis: CONNECTED ✅' || echo 'Redis: DISCONNECTED ❌'"
+            alias redis-start="redis-server --daemonize yes --port 6379 --dir /tmp"
+            alias redis-stop="redis-cli shutdown"
+            
+            # Links2Go project helpers
+            alias backend="cd backend"
+            alias frontend="cd frontend"
+            alias root="cd \$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+            
+            # Development shortcuts
+            alias logs-backend="cd backend && npm run dev"
+            alias logs-frontend="cd frontend && npm run dev"
+            alias lint="npm run lint"
+            alias format="npm run format"
+            
+            # Git aliases
+            alias gs="git status"
+            alias ga="git add"
+            alias gc="git commit"
+            alias gp="git push"
+            alias gl="git log --oneline -10"
+            EOF
+            
+            echo "🖥️  Welcome to Links2Go Development Environment!"
+            echo ""
+            echo "🎨 Retro Terminal Theme Active"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+            echo "📋 Available Commands:"
+            echo "  🚀 dev (start-dev)     - Start development servers"  
+            echo "  🧪 test (run-tests)    - Run comprehensive test suite"
+            echo "  🏗️  build              - Build for production"
+            echo "  🧹 clean              - Clean all build artifacts"
+            echo ""
+            echo "🔧 Redis Commands:"
+            echo "  redis-status          - Check Redis connection"
+            echo "  redis-start           - Start Redis server"
+            echo "  redis-stop            - Stop Redis server"
+            echo ""
+            echo "📂 Navigation:"
+            echo "  backend               - Go to backend directory"
+            echo "  frontend              - Go to frontend directory" 
+            echo "  root                  - Go to project root"
+            echo ""
+            echo "🎯 Quick Start:"
+            echo "  dev                   - Start both servers and Redis"
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+            
+            # Start zsh with our configuration
+            exec "$SHELL"
           '';
         };
 
