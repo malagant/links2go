@@ -67,7 +67,7 @@
           
           echo "🎯 Starting development servers..."
           echo "   Backend:  http://localhost:3001"
-          echo "   Frontend: http://localhost:3000"
+          echo "   Frontend: http://localhost:5173"
           echo "   Metrics:  http://localhost:3001/metrics"
           echo ""
           echo "Press Ctrl+C to stop all services"
@@ -155,7 +155,7 @@
             export REDIS_HOST=localhost
             export REDIS_PORT=6379
             export PORT=3001
-            export FRONTEND_URL=http://localhost:3000
+            export FRONTEND_URL=http://localhost:5173
             export BASE_URL=http://localhost:3001
             
             # Add scripts to PATH

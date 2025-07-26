@@ -28,10 +28,12 @@ A fast URL shortener with a nostalgic analog TV monitor interface, built with mo
 
 - **Fast URL Shortening**: Redis-powered backend with sub-100ms response times
 - **Retro TV Interface**: Authentic CRT monitor experience with scanlines and phosphor glow
+- **Multiple Vintage Themes**: 5 classic CRT monitor styles (Green Phosphor, Amber Terminal, Blue Screen, White Terminal, Cyan Matrix)
 - **Real-time Analytics**: Click tracking with Prometheus metrics
 - **QR Code Generation**: Visual QR codes for easy mobile sharing
 - **Custom Short Codes**: Personalized URLs with validation
 - **Expiring URLs**: Time-limited links with automatic cleanup
+- **Keyboard Shortcuts**: Full keyboard navigation and accessibility support
 
 ## Tech Stack 🛠️
 
@@ -268,6 +270,32 @@ npm run format  # Format code
 npm run lint    # Check for issues
 npm run check   # Run both format and lint
 ```
+
+## 🎨 Theming System
+
+Links2Go features a comprehensive theming system with 5 vintage CRT monitor styles:
+
+### Available Themes
+
+| Theme | Description | Era | Colors |
+|-------|-------------|-----|--------|
+| **Green Phosphor** | Classic monochrome terminal | 1970s-1980s | Green on black |
+| **Amber Terminal** | Warm amber glow display | 1980s business | Orange on brown |
+| **Blue Screen** | Cool blue monochrome | Vintage scientific | Cyan on blue |
+| **White Terminal** | High contrast display | Modern accessibility | White on gray |
+| **Cyan Matrix** | Cyberpunk-inspired | Sci-fi aesthetic | Cyan on teal |
+
+### Usage
+
+- **Settings Access**: Click the SETTINGS button or press `F12`
+- **Theme Selection**: Click any theme card to apply instantly
+- **Persistence**: Your choice is saved and restored on next visit
+- **Keyboard Shortcuts**: 
+  - `F12` or `Ctrl + ,` - Open settings
+  - `Tab` - Switch between main tabs
+  - `Escape` - Close settings
+
+For detailed information about the theming system, see [docs/THEMING.md](./docs/THEMING.md).
 
 ## License 📄
 

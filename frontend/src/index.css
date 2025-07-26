@@ -4,10 +4,35 @@
 
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
 
+/* CSS Variables for theming */
+:root {
+  /* Default theme variables (Green Phosphor) */
+  --theme-bg: #000000;
+  --theme-text: #00ff41;
+  --theme-text-dim: #008f20;
+  --theme-text-bright: #40ff71;
+  --theme-phosphor: #00ff41;
+  --theme-screen-bg: #0a0a0a;
+  --theme-bezel-bg: #2a2a2a;
+  --theme-frame-bg: #1a1a1a;
+  --theme-scanline-color: #00ff41;
+  --theme-scanline-opacity: 0.05;
+  --theme-glow-color: #00ff41;
+  --theme-flicker-intensity: 0.96;
+  --theme-curve-intensity: 1;
+  --theme-font-family: 'IBM Plex Mono, Courier New, monospace';
+  --theme-font-size-xs: 0.75rem;
+  --theme-font-size-sm: 0.875rem;
+  --theme-font-size-base: 1rem;
+  --theme-font-size-lg: 1.125rem;
+}
+
 /* CRT Screen Effects */
 @layer base {
   body {
-    @apply bg-black font-mono text-retro-text;
+    background: var(--theme-bg);
+    font-family: var(--theme-font-family);
+    color: var(--theme-text);
     overflow-x: hidden;
   }
   
@@ -20,7 +45,7 @@
 @layer components {
   .crt-monitor {
     position: relative;
-    background: linear-gradient(45deg, #2a2a2a, #1a1a1a);
+    background: linear-gradient(45deg, var(--theme-bezel-bg), var(--theme-frame-bg));
     border-radius: 20px;
     padding: 30px;
     box-shadow: 
@@ -30,13 +55,13 @@
   
   .crt-screen {
     position: relative;
-    background: #000;
+    background: var(--theme-screen-bg);
     border-radius: 10px;
     padding: 20px;
     overflow: hidden;
     box-shadow: 
       inset 0 0 50px rgba(0, 0, 0, 0.8),
-      0 0 30px rgba(0, 255, 65, 0.2);
+      0 0 30px color-mix(in srgb, var(--theme-phosphor) 20%, transparent);
   }
   
   .crt-screen::before {
@@ -50,8 +75,8 @@
       0deg,
       transparent,
       transparent 2px,
-      rgba(0, 255, 65, 0.03) 2px,
-      rgba(0, 255, 65, 0.03) 4px
+      color-mix(in srgb, var(--theme-scanline-color) calc(var(--theme-scanline-opacity) * 50), transparent) 2px,
+      color-mix(in srgb, var(--theme-scanline-color) calc(var(--theme-scanline-opacity) * 50), transparent) 4px
     );
     pointer-events: none;
     z-index: 10;
@@ -79,8 +104,8 @@
       0deg,
       transparent,
       transparent 1px,
-      rgba(0, 255, 65, 0.05) 1px,
-      rgba(0, 255, 65, 0.05) 2px
+      color-mix(in srgb, var(--theme-scanline-color) calc(var(--theme-scanline-opacity) * 100), transparent) 1px,
+      color-mix(in srgb, var(--theme-scanline-color) calc(var(--theme-scanline-opacity) * 100), transparent) 2px
     );
     animation: scanline 0.1s linear infinite;
     pointer-events: none;
@@ -88,58 +113,112 @@
   }
   
   .retro-button {
-    @apply bg-retro-bg border-2 border-retro-text text-retro-text px-6 py-3 font-mono text-sm uppercase tracking-wider;
+    background: var(--theme-bg);
+    border: 2px solid var(--theme-text);
+    color: var(--theme-text);
+    padding: 0.75rem 1.5rem;
+    font-family: var(--theme-font-family);
+    font-size: var(--theme-font-size-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
     transition: all 0.2s ease;
     text-shadow: 0 0 10px currentColor;
-    box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--theme-phosphor) 30%, transparent);
   }
   
   .retro-button:hover {
-    @apply bg-retro-text text-retro-bg;
+    background: var(--theme-text);
+    color: var(--theme-bg);
     text-shadow: none;
-    box-shadow: 0 0 20px rgba(0, 255, 65, 0.6);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--theme-phosphor) 60%, transparent);
   }
   
   .retro-input {
-    @apply bg-retro-bg border-2 border-retro-dim text-retro-text px-4 py-3 font-mono text-sm;
+    background: var(--theme-bg);
+    border: 2px solid var(--theme-text-dim);
+    color: var(--theme-text);
+    padding: 0.75rem 1rem;
+    font-family: var(--theme-font-family);
+    font-size: var(--theme-font-size-sm);
     text-shadow: 0 0 5px currentColor;
-    box-shadow: inset 0 0 10px rgba(0, 255, 65, 0.1);
+    box-shadow: inset 0 0 10px color-mix(in srgb, var(--theme-phosphor) 10%, transparent);
   }
   
   .retro-input:focus {
-    @apply border-retro-text outline-none;
+    border-color: var(--theme-text);
+    outline: none;
     box-shadow: 
-      inset 0 0 10px rgba(0, 255, 65, 0.2),
-      0 0 10px rgba(0, 255, 65, 0.3);
+      inset 0 0 10px color-mix(in srgb, var(--theme-phosphor) 20%, transparent),
+      0 0 10px color-mix(in srgb, var(--theme-phosphor) 30%, transparent);
   }
   
   .terminal-text {
-    @apply text-retro-text font-mono;
+    color: var(--theme-text);
+    font-family: var(--theme-font-family);
     text-shadow: 0 0 10px currentColor;
     animation: glow 2s ease-in-out infinite alternate;
   }
   
   .status-light {
-    @apply w-3 h-3 rounded-full;
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
     box-shadow: 0 0 10px currentColor;
   }
   
   .status-light.active {
-    @apply bg-retro-text;
+    background: var(--theme-text);
     animation: glow 1s ease-in-out infinite alternate;
   }
   
   .status-light.inactive {
-    @apply bg-retro-dim;
+    background: var(--theme-text-dim);
   }
 }
 
-/* Flicker Animation */
+/* Animations */
 @keyframes flicker {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.98; }
+  50% { opacity: var(--theme-flicker-intensity); }
+}
+
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes glow {
+  0% { 
+    text-shadow: 
+      0 0 20px var(--theme-glow-color), 
+      0 0 30px var(--theme-glow-color), 
+      0 0 40px var(--theme-glow-color);
+  }
+  100% { 
+    text-shadow: 
+      0 0 10px var(--theme-glow-color), 
+      0 0 20px var(--theme-glow-color), 
+      0 0 30px var(--theme-glow-color);
+  }
 }
 
 .crt-flicker {
   animation: flicker 0.15s infinite linear alternate;
 }
+
+/* Theme-specific utility classes */
+.text-theme-bg { color: var(--theme-bg); }
+.text-theme-text { color: var(--theme-text); }
+.text-theme-text-dim { color: var(--theme-text-dim); }
+.text-theme-text-bright { color: var(--theme-text-bright); }
+.text-theme-phosphor { color: var(--theme-phosphor); }
+
+.bg-theme-bg { background-color: var(--theme-bg); }
+.bg-theme-text { background-color: var(--theme-text); }
+.bg-theme-text-dim { background-color: var(--theme-text-dim); }
+.bg-theme-screen-bg { background-color: var(--theme-screen-bg); }
+.bg-theme-bezel-bg { background-color: var(--theme-bezel-bg); }
+.bg-theme-frame-bg { background-color: var(--theme-frame-bg); }
+
+.border-theme-text { border-color: var(--theme-text); }
+.border-theme-text-dim { border-color: var(--theme-text-dim); }

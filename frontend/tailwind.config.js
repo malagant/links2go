@@ -26,6 +26,16 @@ export default {
           'text': '#00ff41',
           'dim': '#008f20',
           'bright': '#40ff71',
+        },
+        'theme': {
+          'bg': 'var(--theme-bg)',
+          'text': 'var(--theme-text)',
+          'text-dim': 'var(--theme-text-dim)',
+          'text-bright': 'var(--theme-text-bright)',
+          'phosphor': 'var(--theme-phosphor)',
+          'screen-bg': 'var(--theme-screen-bg)',
+          'bezel-bg': 'var(--theme-bezel-bg)',
+          'frame-bg': 'var(--theme-frame-bg)',
         }
       },
       animation: {
