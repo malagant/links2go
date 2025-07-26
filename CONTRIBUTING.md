@@ -248,6 +248,34 @@ When implementing authentication:
 - Document error conditions
 - Update OpenAPI spec when available
 
+### Screenshots
+
+When UI changes significantly, update screenshots:
+
+```bash
+# Start the application
+nix develop
+dev
+
+# Use the screenshot helper
+./scripts/take-screenshots.sh
+
+# Take screenshots following the guide
+# See docs/SCREENSHOTS.md for detailed instructions
+```
+
+Required screenshots:
+- `main-interface.png` - Main URL shortener interface
+- `analytics-dashboard.png` - Analytics dashboard  
+- `qr-code-modal.png` - QR code generation modal
+- `terminal-experience.png` - Retro CRT monitor experience
+
+Screenshots should:
+- Be high resolution (1920x1080+) PNG format
+- Show the retro CRT aesthetic clearly
+- Include no sensitive information
+- Maintain consistent styling
+
 ## Deployment
 
 ### Building for Production

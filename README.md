@@ -2,6 +2,28 @@
 
 A fast URL shortener with a nostalgic analog TV monitor interface, built with modern technologies.
 
+## Screenshots 📸
+
+### Main Interface - URL Shortener
+![URL Shortener Interface](./docs/screenshots/main-interface.png)
+*The main CRT monitor interface with terminal-style URL shortening form*
+
+### Analytics Dashboard
+![Analytics Dashboard](./docs/screenshots/analytics-dashboard.png)
+*Comprehensive analytics with device breakdown and click tracking*
+
+### QR Code Generation
+![QR Code Modal](./docs/screenshots/qr-code-modal.png)
+*QR code generation modal with download and copy functionality*
+
+### Retro Terminal Experience
+![Terminal Experience](./docs/screenshots/terminal-experience.png)
+*Authentic CRT monitor with scanlines, phosphor glow, and ASCII art*
+
+> **📝 Note:** Screenshots are taken from the live application. To see the interface in action, run `nix develop` and `dev` to start the development servers, then visit http://localhost:5173. 
+> 
+> **📸 Taking Screenshots:** Use `./scripts/take-screenshots.sh` for guided screenshot capture. See [docs/SCREENSHOTS.md](./docs/SCREENSHOTS.md) for detailed guidelines.
+
 ## Features ✨
 
 - **Fast URL Shortening**: Redis-powered backend with sub-100ms response times
