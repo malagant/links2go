@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build
 
 # Production stage with NGINX
-FROM nginx:1.25-alpine
+FROM nginx:1.29-alpine
 
 # Install additional security packages
 RUN apk update && apk add --no-cache \
